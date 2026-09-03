@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  pipeline:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./ml:/app/ml
+      - ./dashboards/powerbi_data:/app/dashboards/powerbi_data
+    container_name: ecommerce_pipeline_runner
+
+# Run with: docker compose up --build
+# This runs the full extract -> load -> transform -> forecast -> export
+# chain in an isolated container and writes results back to your host
+# via the mounted volumes -- so Power BI can pick up the exported CSVs
+# without anything else needing to be installed locally.

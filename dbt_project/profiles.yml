@@ -1,0 +1,12 @@
+# Local dbt connection profile targeting DuckDB.
+# Copy this to ~/.dbt/profiles.yml (or set DBT_PROFILES_DIR=./dbt_project)
+# after running: pip install dbt-core dbt-duckdb
+
+ecommerce_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/processed/warehouse.duckdb
+      schema: main
+      threads: 4

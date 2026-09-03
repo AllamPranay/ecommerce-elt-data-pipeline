@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: One row per customer (SCD1 dimension).
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: dim_products
+    description: One row per product.
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: dim_date
+    description: Calendar date spine for the order history period.
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+
+  - name: fct_order_items
+    description: Grain -- one row per order line item. Core fact table.
+    columns:
+      - name: order_item_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+
+  - name: mart_daily_sales
+    description: Daily-grain sales aggregate. Feeds Power BI + the forecasting model.
+    columns:
+      - name: order_date
+        tests: [unique, not_null]
+
+  - name: mart_customer_order_summary
+    description: Per-customer order history summary (orders, revenue, recency) for the BI dashboard.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: mart_sales_trends
+    description: Daily revenue with moving averages, DoD growth, and cumulative revenue (window functions).
+    columns:
+      - name: order_date
+        tests: [unique, not_null]
+
+  - name: mart_product_ranking
+    description: Product revenue ranked within category with cumulative revenue share (window functions).
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: mart_monthly_category_revenue
+    description: Monthly revenue pivoted by category via conditional aggregation.
+    columns:
+      - name: month
+        tests: [unique, not_null]
+
+  - name: mart_market_basket
+    description: Frequently-bought-together product pairs via self-join market basket analysis.

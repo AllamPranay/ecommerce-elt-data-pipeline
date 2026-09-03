@@ -1,0 +1,15 @@
+.git/
+data/raw/*.csv
+data/processed/*.db
+data/processed/*.duckdb
+dashboards/powerbi_data/*.csv
+ml/forecast_output.csv
+ml/forecast_chart.png
+ml/model_metrics.txt
+__pycache__/
+*.pyc
+.venv/
+venv/
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/

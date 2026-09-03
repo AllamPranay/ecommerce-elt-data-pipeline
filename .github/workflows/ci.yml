@@ -1,0 +1,43 @@
+name: pipeline-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-pipeline-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install lightweight dependencies
+        run: pip install pandas numpy scikit-learn matplotlib pytest
+
+      - name: Run pipeline (extract -> load -> transform, incl. advanced SQL marts) + data quality tests
+        run: pytest tests/ -v
+
+      - name: Run ML forecasting step
+        run: |
+          python src/extract.py
+          python src/load.py --engine sqlite
+          python src/transform_local.py
+          python ml/sales_forecast.py
+
+      - name: Export Power BI-ready CSVs
+        run: python src/export_for_powerbi.py
+
+      - name: Upload pipeline artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-outputs
+          path: |
+            dashboards/powerbi_data/
+            ml/forecast_output.csv
+            ml/forecast_chart.png

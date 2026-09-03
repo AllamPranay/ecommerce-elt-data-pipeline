@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Raw tables loaded as-is from data/raw/*.csv by src/load.py
+    tables:
+      - name: customers
+      - name: products
+      - name: orders
+      - name: order_items
+
+models:
+  - name: stg_customers
+    description: One row per customer, lightly cleaned.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: stg_products
+    description: One row per product with margin calculated.
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: stg_orders
+    description: One row per order header.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ['Delivered', 'Shipped', 'Cancelled', 'Returned']
+
+  - name: stg_order_items
+    description: One row per order line item (grain of the fact table).
+    columns:
+      - name: order_item_id
+        tests: [unique, not_null]
