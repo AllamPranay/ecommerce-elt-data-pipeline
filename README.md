@@ -1,4 +1,4 @@
-# E-Commerce Sales Data Platform
+# E-Commerce ELT Data Pipeline
 
 An end-to-end **ELT data pipeline** for an e-commerce business: raw transactional
 data is extracted, loaded into an analytical warehouse, transformed into a
